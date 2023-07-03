@@ -15,3 +15,6 @@ use Automattic\WooCommerce\Client;
 
 
 add_action('init', ['OEPS_PositiveIntegration', 'init']);
+
+register_activation_hook( __FILE__, ['OEPS_PositiveIntegration', 'activation'] ); 
+register_deactivation_hook( __FILE__, ['OEPS_PositiveIntegration', 'deactivation'] ); 

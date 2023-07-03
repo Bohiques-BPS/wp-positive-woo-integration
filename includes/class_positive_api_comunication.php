@@ -3,7 +3,7 @@
 defined( 'ABSPATH' ) || die( );
 
 /**
- * OEPS_PositiveAPIComunication: esta clase sigue el patron Songleton.
+ * OEPS_PositiveAPIComunication: esta clase sigue el patron Singleton.
  * Se encarga de realizar la comunicacion con positive
  */
 class OEPS_PositiveAPIComunication {
@@ -13,7 +13,9 @@ class OEPS_PositiveAPIComunication {
     private $api_url = 'http://oepc.positiveanywhere.com';
 
     private function __construct( ) {
-
+        // $this->username = 'POS1';
+        // $this->password = 'POS1';
+        // $this->api_url = 'http://oepc.positiveanywhere.com';
     }
 
     public static function getInstance( ) {
@@ -31,7 +33,7 @@ class OEPS_PositiveAPIComunication {
     }
 
     public function getProducts( ) {
-        $api_url = "$api_url/product_list";
+        $api_url = $this->api_url."/product_list";
     
         $headers = array(
             'Authorization' => 'Basic ' . base64_encode($this->username . ':' . $this->password),
@@ -52,7 +54,7 @@ class OEPS_PositiveAPIComunication {
                     'timeout' => 1000,
                     'body' => json_encode( $body )
                 );
-                $response = wp_remote_post( $this->api_url, $args );
+                $response = wp_remote_post( $api_url, $args );
                 
                 if( is_wp_error($response) ) {
                     $error_message = $response->get_error_message();
