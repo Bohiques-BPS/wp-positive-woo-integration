@@ -8,18 +8,15 @@ class OEPS_Cron {
     }
 
     public static function init( ) {
-        // add_filter( 'cron_schedules', ['OEPS_Cron','add_cron_interval_5_seconds'] );
-        // add_action( 'OEPS_cron_hook', ['OEPS_Cron', 'cron_action']);
-        // echo json_encode(        wp_remote_get('http://localhost/wp-json/OEPS/v1/pullData')    );
-        // if ( !wp_next_scheduled( 'OEPS_cron_hook' ) ) {
-        //     wp_schedule_event( time(), 'every_minute', 'OEPS_cron_hook' );
-        // }
+        add_filter( 'cron_schedules', ['OEPS_Cron','add_cron_interval_5_seconds'] );
+        add_action( 'OEPS_cron_hook', ['OEPS_Cron', 'cron_action']);
+        if ( !wp_next_scheduled( 'OEPS_cron_hook' ) ) {
+            wp_schedule_event( time(), 'every_minute', 'OEPS_cron_hook' );
+        }
     }
 
     public static function activate() {
-        // if ( !wp_next_scheduled( 'OEPS_cron_hook' ) ) {
-        //     wp_schedule_event( time(), 'five_seconds', 'OEPS_cron_hook' );
-        // }
+       
     }
 
     public static function deactivate() {
@@ -30,7 +27,7 @@ class OEPS_Cron {
     }
 
     public static function cron_action( ) {
-        // wp_remote_get('http://localhost/wp-json/OEPS/v1/pullData');
+        OEPS_PositiveIntegration::pullData( );
     }
 
     public static function add_cron_interval_5_seconds( $schedules ) { 

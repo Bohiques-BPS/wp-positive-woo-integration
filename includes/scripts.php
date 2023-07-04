@@ -55,7 +55,7 @@ function array_remove_duplicates(array $array, string $key)
     return $result;
 }
 
-function HTTPRequest( $url, $data ) {
+function HTTPRequest( $url, $data=[] ) {
     $curl = curl_init();
     curl_setopt_array($curl, [
         CURLOPT_URL => $url,
@@ -64,10 +64,10 @@ function HTTPRequest( $url, $data ) {
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_MAXREDIRS => 10,
         CURLOPT_TIMEOUT => 30,
-        CURLOPT_HTTPHEADER => [
-            'Content-Type: application/json',
-            'Authorization: Basic ' . base64_encode('POS1:POS1') // Reemplazar con tus credenciales de autenticación
-        ],
+        // CURLOPT_HTTPHEADER => [
+        //     'Content-Type: application/json',
+        //     'Authorization: Basic ' . base64_encode('POS1:POS1') // Reemplazar con tus credenciales de autenticación
+        // ],
         // CURLOPT_POST => true,
         // CURLOPT_POSTFIELDS => json_encode( $data['body'] ),
     ]);

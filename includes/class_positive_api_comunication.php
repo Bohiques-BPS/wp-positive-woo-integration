@@ -51,7 +51,7 @@ class OEPS_PositiveAPIComunication {
                 ];
                 $args = array(
                     'headers' => $headers,
-                    'timeout' => 1000,
+                    'timeout' => 10000,
                     'body' => json_encode( $body )
                 );
                 $response = wp_remote_post( $api_url, $args );
