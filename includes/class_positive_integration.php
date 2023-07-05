@@ -110,7 +110,7 @@ class OEPS_PositiveIntegration {
                  * Sino lo creamos en woo
                  */
                 $productsToCreate[] = [
-                    'positive_id'     => $positiveProduct['productid'],
+                    'positive_id'     => $positiveProduct->productid,
                     'sku'             => $positiveProduct->sku,
                     'stock_quantity'  => $positiveProduct->in_stock,
                     'regular_price'   => $positiveProduct->retail_price,
