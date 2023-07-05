@@ -11,11 +11,13 @@ class OEPS_PositiveAPIComunication {
     private $username = 'POS1';
     private $password = 'POS1';
     private $api_url = 'http://oepc.positiveanywhere.com';
+    private $headers;
 
     private function __construct( ) {
-        // $this->username = 'POS1';
-        // $this->password = 'POS1';
-        // $this->api_url = 'http://oepc.positiveanywhere.com';
+        $this->headers = array(
+            'Authorization' => 'Basic ' . base64_encode($this->username . ':' . $this->password),
+            'Content-Type' => 'application/json',
+        );
     }
 
     public static function getInstance( ) {
@@ -29,16 +31,40 @@ class OEPS_PositiveAPIComunication {
      * 
      */
     public function getProductById( int $product_id ) {
-        return null;
+        $api_url = $this->api_url."/product_list";
+        $headers = $this->headers;
+        $body = [
+            'options' => [
+                'productid' => $product_id
+            ]
+        ];
+        $args = array(
+            'headers' => $headers,
+            'timeout' => 10000,
+            'body' => json_encode( $body )
+        );
+        $response = wp_remote_post( $api_url, $args );
+        $response_code = wp_remote_retrieve_response_code($response);
+
+        if( is_wp_error($response) ) {
+            $error_message = $response->get_error_message();
+            echo "Error: $error_message";
+            return null;
+        }
+        if( $response_code != 200 ) {
+            echo "Error en la respuesta HTTP. Código: $response_code";
+            return null;
+        }
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode( utf8_encode($body) );
+        $positiveProducts = $data->product_list_response->product_list->products;
+        return isset( $positiveProducts[0] ) ? $positiveProducts[0] : null;
     }
 
     public function getProducts( ) {
         $api_url = $this->api_url."/product_list";
-    
-        $headers = array(
-            'Authorization' => 'Basic ' . base64_encode($this->username . ':' . $this->password),
-            'Content-Type' => 'application/json',
-        );
+        $headers = $this->headers;
+
         try {
             $currentBlock = 1;
             $allElements = [];
