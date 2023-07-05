@@ -55,6 +55,7 @@ class OEPS_PositiveIntegration {
         $positiveStock = $positiveProduct ? +$positiveProduct->in_stock : null;
         if( $positiveStock ) {
             $product->set_stock_status('instock');
+            $product->set_stock_quantity( $positiveStock );
             $class = 'in-stock';
             $availability = "$positiveStock disponibles";
         }
