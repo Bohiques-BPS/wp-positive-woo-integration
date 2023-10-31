@@ -85,20 +85,3 @@ function HTTPRequest( $url, $data=[] ) {
     curl_close($curl);
     return $response;
 }
-
-
-function OEPS_create_products( $products ) {
-    $woocommerce = new Client(
-      'http://localhost',
-      'ck_399bafd36dde48b53c6d75c94c668c0ca8cba7e9',
-      'cs_5e9c05f97b2fd9375bcaeca040830a88667dbcef',
-      [
-        'version' => 'wc/v3',
-      ]
-    );
-    $arrayProducts = array_chunk( $products, 50 );
-    foreach( $arrayProducts as $products ) {
-      $response = $woocommerce->post('products/batch', [ 'create' => $products ]);
-    }
-    return 'elements created successfully';
-  }
