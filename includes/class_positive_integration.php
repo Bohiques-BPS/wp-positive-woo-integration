@@ -53,18 +53,13 @@ class OEPS_PositiveIntegration {
         $positiveId = $metaData->value;
         $positiveProduct = self::$instance->getProductById( $positiveId );
         $positiveStock = $positiveProduct ? +$positiveProduct->in_stock : null;
-        if( $positiveStock ) {
-            $product->set_stock_status('instock');
-            $product->set_stock_quantity( $positiveStock );
-            $class = 'in-stock';
-            $availability = "$positiveStock disponibles";
-        }
-        else {
+        if( $positiveId === 0 ) {
             $product->set_stock_status('outofstock');
             $class = 'out-of-stock';
             $availability = 'Agotado';
+            return "<p class='stock $class'> $availability </p>";
         }
-        return "<p class='stock $class'> $availability </p>";
+        return $html;
     }
         
     public static function pullData( ) {
