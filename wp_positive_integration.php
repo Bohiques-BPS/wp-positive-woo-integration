@@ -7,7 +7,6 @@
 */
 defined( 'ABSPATH' ) || die( );
 
-require __DIR__ . '/vendor/autoload.php';
 include_once __DIR__ . '/includes/scripts.php';
 include __DIR__ . '/includes/class_positive_integration.php';
 
