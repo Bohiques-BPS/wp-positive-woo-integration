@@ -2,6 +2,9 @@
 
 defined( 'ABSPATH' ) || die( );
 
+/**
+ * Class OEPS_WooController: Se encarga de administrar los datos de los productos de woocommerce de manera interna
+ */
 class OEPS_WooController {
 
     public static function getProductsData(  ) {

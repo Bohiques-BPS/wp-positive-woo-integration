@@ -7,6 +7,10 @@ require_once __DIR__ . '/class_woo_controller.php';
 require_once __DIR__ . '/class_positive_api_comunication.php';
 require_once __DIR__ . '/class_cron.php';
 
+
+/**
+ * Clase principal, se encarga de almacenar las principales funciones para el funcionamiento del plugin
+ */
 class OEPS_PositiveIntegration {
     public static $instance;
 

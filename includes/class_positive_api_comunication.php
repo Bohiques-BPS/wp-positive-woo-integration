@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) || die( );
 
 /**
  * OEPS_PositiveAPIComunication: esta clase sigue el patron Singleton.
- * Se encarga de realizar la comunicacion con positive
+ * Se encarga de realizar la comunicacion con la API de positive
  */
 class OEPS_PositiveAPIComunication {
     private static $instance;
@@ -48,11 +48,11 @@ class OEPS_PositiveAPIComunication {
 
         if( is_wp_error($response) ) {
             $error_message = $response->get_error_message();
-            echo "Error: $error_message";
+            // echo "Error: $error_message";
             return null;
         }
         if( $response_code != 200 ) {
-            echo "Error en la respuesta HTTP. Código: $response_code";
+            // echo "Error en la respuesta HTTP. Código: $response_code";
             return null;
         }
         $body = wp_remote_retrieve_body($response);
