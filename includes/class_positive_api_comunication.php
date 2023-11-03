@@ -8,8 +8,8 @@ defined( 'ABSPATH' ) || die( );
  */
 class OEPS_PositiveAPIComunication {
     private static $instance;
-    private $username = 'POS1';
-    private $password = 'POS1';
+    private $username = 'SbYT4x3#G%';
+    private $password = 'bjZX7pP$I9';
     private $api_url = 'http://oepc.positiveanywhere.com';
     private $headers;
 
@@ -113,7 +113,86 @@ class OEPS_PositiveAPIComunication {
             return $allElements;
         }
         catch (\Throwable $th) {
-        throw $th;
+            throw $th;
         }
+    }
+
+    
+    public function transaction_create( $transactionData ) {
+        $api_url = $this->api_url."/transaction_create";
+        // echo $transactionData['localtransactionid'];
+        $body = array(
+            'transaction' => array(
+                'localtransactionid' => $transactionData['localtransactionid'],
+                'customerid' => $transactionData['customerid'],
+                'addressid' => $transactionData['addressid'],
+                'transactiontype' => 'N',
+                'created_at' => $transactionData['created_at'],
+                'updated_at' => $transactionData['updated_at'],
+                'deliverymethod' => 'C',
+                'purchaseordernumber' => '',
+                'taxamount' => '0',
+                'total' => $transactionData['total'],
+                'note' => 'pago a traves de positive anywhere',
+            ),
+            'linedetail' => $transactionData['linedetails']
+        );
+        $args = array(
+            'headers' => $this->headers,
+            'timeout' => 10000,
+            'body' => json_encode( $body )
+        );
+        $response = wp_remote_post( $api_url, $args );
+        $response_code = wp_remote_retrieve_response_code($response);
+
+        if( is_wp_error($response) ) {
+            $error_message = $response->get_error_message();
+            return ['status' => $error_message];
+        }
+        if( $response_code != 200 ) {
+            return ['status' => 'error en la respuesta HTTP. Código: '.$response_code];
+        }
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode( utf8_encode($body), true);
+        if ($data['order_create_response']['result']['status'] !== 'success') {
+            return ['status' => 'error al crear la transacción: ' . $data['order_create_response']['result']['status']];
+        }
+        return $data['order_create_response']['result'];
+    }
+
+
+    //cambiar en las funciones para que devuelva un campo ok para mejor validacion
+    public function transaction_payment( $localtransactionid, $amount, $created_at ) {
+        $api_url = $this->api_url."/transaction_payment_create";
+        $body = [
+            'transactionpayment' => [
+                'localtransactionid'    => $localtransactionid,
+                'created_at'            => $created_at,
+                'paymenttype'           => 'C',
+                'amount'                => $amount,
+                'vataamount'            => 0
+            ]
+        ];
+        $args = array(
+            'headers' => $this->headers,
+            'timeout' => 10000,
+            'body' => json_encode( $body )
+        );
+        $response = wp_remote_post( $api_url, $args );
+        $response_code = wp_remote_retrieve_response_code($response);
+
+        if( is_wp_error($response) ) {
+            $error_message = $response->get_error_message();
+            return ['status' => $error_message];
+        }
+        if( $response_code != 200 ) {
+            return ['status' => 'error en la respuesta HTTP. Código: '.$response_code];
+        }
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode( utf8_encode($body), true);
+        if ($data['transaction_payment_create_response']['result'][0]['status'] !== 'Success') {
+            return ['status' => 'error al crear la transacción: ' . $data['transaction_payment_create_response']['result'][0]['status']];
+        }
+        return $data['transaction_payment_create_response']['result'][0];
     }
 }
