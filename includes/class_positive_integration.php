@@ -18,6 +18,8 @@ class OEPS_PositiveIntegration {
         self::$instance = OEPS_PositiveAPIComunication::getInstance( );
 
         add_action('rest_api_init', ['OEPS_PositiveIntegration', 'register_routes']);
+        add_action('woocommerce_payment_complete', ['OEPS_PositiveIntegration', 'paymentComplete']);
+        add_action('woocommerce_new_order', ['OEPS_PositiveIntegration', 'paymentComplete']);
         add_filter('woocommerce_get_stock_html', ['OEPS_PositiveIntegration', 'getStockProduct']);
         OEPS_Cron::init( );
         
@@ -40,6 +42,70 @@ class OEPS_PositiveIntegration {
                 return true;
             },
         ));
+        register_rest_route('OEPS/v1', 'paytest', array(
+            'methods' => 'GET',
+            'callback' => ['OEPS_PositiveIntegration', 'paymentTest'],
+            'permission_callback' => function( ) {
+                return true;
+            },
+        ));
+    }
+
+    public static function paymentTest( ) {
+        return self::paymentComplete( 628 );
+    }
+
+    public static function paymentComplete( int $order_id ) {
+        $order = wc_get_order( $order_id );
+        if( !$order ) return;
+        $localtransactionid = $order_id;
+        $amount = $order->get_total( );
+        $created_at = date('Y-m-d').'T'.date('H:i:s');
+        
+        $api = self::$instance;
+        $transactionData = array(
+            'localtransactionid' => $localtransactionid,
+            'customerid' => 28, // Ajusta el ID de cliente según tus necesidades
+            'addressid' => 1, // Ajusta el ID de dirección según tus necesidades
+            'created_at' => $created_at,
+            'updated_at' => $created_at,
+            'total' => $amount,
+            'linedetails' => self::obtenerLineDetails( $order )
+        );
+
+        return $transactionData;
+
+        
+        $response_create = $api->transaction_create( $transactionData );
+        $status = $response_create['status'];
+        if( $status !== 'success' ) {
+            throw new Exception( $status );
+        }
+
+        $response_payment = $api->transaction_payment( $localtransactionid, $amount, $created_at );
+        if( $response_payment['status'] !== 'Success' ) {
+            throw new Exception('Error al realizar el pago: '.$response_payment['status']);
+        }
+        return 'pago exitoso';
+    }
+
+    public static function obtenerLineDetails( $order ) {
+        $line_details = array( );
+        foreach( $order->get_items() as $item_id => $item ) {
+            $product = $item->get_product();
+            $product_id = get_post_meta( $product->get_id(), '_positive_id', true );
+            if( !$product_id ) continue;
+            $line_details[] = array(
+                'productid' => $product_id,
+                'sku' => $product->get_sku(),
+                'description' => $product->get_name(),
+                'quantity' => $item->get_quantity(),
+                'price' => $product->get_price(),
+                'taxamount' => 0,
+                'linetotal' => $item->get_subtotal(),
+            );
+        }
+        return $line_details;
     }
     
     /**
@@ -66,6 +132,14 @@ class OEPS_PositiveIntegration {
         return $html;
     }
         
+    /**
+     * Pulls data from the "positive" and "woocommerce" sources and
+     * compares the products. If a product exists in "positive" but
+     * not in "woocommerce", it is considered a new product. If a
+     * product exists in both sources, it is compared for updates.
+     *
+     * @return array An array containing the updated and created products.
+     */
     public static function pullData( ) {
         $positiveProducts = self::$instance->getProducts( );
         $wooProducts = OEPS_WooController::getProductsData( );
