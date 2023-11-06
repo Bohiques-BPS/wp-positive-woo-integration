@@ -5,11 +5,10 @@ El objetivo de este proyecto es integrar una tienda WooCommerce con el servicio 
 
  · Dominio del cliente: https://www.officeexpert.com.
  · Dominio de la documentacion de Positive Software: https://https://www.positive.software
- · Servidor de prueba: https://www.oe.bohiques.com
 
 
  * Pasos para la Integración:
 
     * Paso 1: Activar Positive Anywhere: Se debe iniciar el programa Positive Anywhere, el cual es el responsable de levantar el servidor y la base de datos que queremos integrar
 
-    * Paso 2: Consumir la API de Positive: Una vez iniciado Positive Anywhere, las peticiones se realizaran hacia la url: 'https://www.https://oepc.positiveanywhere.com/', donde deberas realizar la respectiva autenticacion para establecer la conexion. -- Para mas informacion acerca de los endpoints de la API visita 'https://www.positive.software/api-integration'
+    * Paso 2: Consumir la API de Positive: Una vez iniciado Positive Anywhere, las peticiones se realizaran hacia la url: 'https://oepc.positiveanywhere.com/', donde deberas realizar la respectiva autenticacion para establecer la conexion. -- Para mas informacion acerca de los endpoints de la API visita 'https://www.positive.software/api-integration'
